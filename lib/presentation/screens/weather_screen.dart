@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:weather_app/utils/app_colors.dart';
+import 'package:weather_app/utils/app_icons.dart';
 import 'package:weather_app/utils/app_images.dart';
 
 class WeatherScreen extends StatelessWidget {
@@ -99,7 +100,7 @@ class WeatherScreen extends StatelessWidget {
                 children: [
                   Padding(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 20.0,
+                      horizontal: 30.0,
                       vertical: 5,
                     ),
                     child: Row(
@@ -120,6 +121,49 @@ class WeatherScreen extends StatelessWidget {
                           ),
                         ),
                       ],
+                    ),
+                  ),
+                  Container(
+                    width: double.infinity,
+                    height: 1,
+                    color: AppColors.white,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20.0,
+                      vertical: 10,
+                    ),
+                    child: SizedBox(
+                      width: double.infinity.w,
+                      height: 120.h,
+                      child: ListView.builder(
+                          itemCount: 5,
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (context, index) {
+                            return Column(
+                              children: [
+                                Text(
+                                  "19℃",
+                                  style: TextStyle(
+                                    color: AppColors.white,
+                                    fontSize: 16.sp,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                Image.asset(
+                                  AppIcons.sun,
+                                ),
+                                Text(
+                                  "12.00",
+                                  style: TextStyle(
+                                    color: AppColors.white,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 16.sp,
+                                  ),
+                                ),
+                              ],
+                            );
+                          }),
                     ),
                   )
                 ],
