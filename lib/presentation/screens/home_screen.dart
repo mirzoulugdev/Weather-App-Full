@@ -1,12 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:weather_app/logic/repositories/repository.dart';
 import 'package:weather_app/presentation/screens/weather_screen.dart';
 import 'package:weather_app/utils/app_colors.dart';
 import 'package:weather_app/utils/app_images.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  HomeScreen({super.key});
+
+  Repository repo = Repository();
 
   @override
   Widget build(BuildContext context) {
@@ -46,11 +49,14 @@ class HomeScreen extends StatelessWidget {
             ),
             SizedBox(height: 20.h),
             GestureDetector(
-              onTap: () => Navigator.of(context).pushReplacement(
-                CupertinoPageRoute(
-                  builder: (context) => WeatherScreen(),
-                ),
-              ),
+              onTap: () async {
+                Navigator.of(context).pushReplacement(
+                  CupertinoPageRoute(
+                    builder: (context) => WeatherScreen(),
+                  ),
+                );
+                await repo.getData(cityName: "Tashkent");
+              },
               child: Container(
                 alignment: Alignment.center,
                 width: 250.w,
