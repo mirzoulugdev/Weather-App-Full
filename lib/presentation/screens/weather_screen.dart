@@ -66,6 +66,64 @@ class WeatherScreen extends StatelessWidget {
                   ),
                 ),
               ],
+            ),
+            SizedBox(height: 20.h),
+            SizedBox(
+              height: 150,
+              child: Image.asset(
+                AppImages.house,
+              ),
+            ),
+            Container(
+              width: double.infinity.w,
+              height: 180.h,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15.r),
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomLeft,
+                  colors: [
+                    AppColors.blue,
+                    AppColors.pink,
+                  ],
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    offset: Offset(0, 0),
+                    blurRadius: 5,
+                    color: AppColors.blue.withOpacity(0.5),
+                  )
+                ],
+              ),
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20.0,
+                      vertical: 5,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Today",
+                          style: TextStyle(
+                            fontSize: 20.sp,
+                            color: AppColors.white,
+                          ),
+                        ),
+                        Text(
+                          "July, 21",
+                          style: TextStyle(
+                            fontSize: 20.sp,
+                            color: AppColors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
             )
           ],
         ),
