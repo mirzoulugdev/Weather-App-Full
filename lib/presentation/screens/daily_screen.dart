@@ -1,16 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
+import 'package:weather_app/model/weather_model.dart';
 
 import 'package:weather_app/presentation/widgets/bold_text.dart';
-import 'package:weather_app/presentation/widgets/custom_container.dart';
 import 'package:weather_app/presentation/widgets/custom_cub.dart';
 import 'package:weather_app/presentation/widgets/normal_text.dart';
 import 'package:weather_app/utils/app_colors.dart';
 import 'package:weather_app/utils/app_images.dart';
 
-class DailyScreen extends StatelessWidget {
-  const DailyScreen({super.key});
+class DailyScreen extends StatefulWidget {
+  final WeatherResponse responseData;
+  const DailyScreen({required this.responseData, super.key});
 
+  @override
+  State<DailyScreen> createState() => _DailyScreenState();
+}
+
+class _DailyScreenState extends State<DailyScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,26 +35,35 @@ class DailyScreen extends StatelessWidget {
           ),
         ),
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                SizedBox(height: 20.h),
+                IconButton(
+                  onPressed: () => Navigator.of(context).pop(),
+                  icon: Icon(
+                    Icons.arrow_back_ios_new_outlined,
+                    color: AppColors.white,
+                  ),
+                ),
                 SizedBox(
-                  height: 60,
+                  height: 30.h,
                 ),
                 Center(
-                  child: NormalText(
+                  child: Boldtext(
                     color: AppColors.white,
-                    fontSize: 24,
-                    text: "North America",
+                    fontSize: 30,
+                    text: widget.responseData.location.name,
                   ),
                 ),
                 Center(
                   child: NormalText(
                     color: AppColors.white,
                     fontSize: 24,
-                    text: "Max: 24°   Min:18°",
+                    text:
+                        "Max: ${widget.responseData.forecast.forecastDay[0].day.maxTempC.ceil()}℃    Min: ${widget.responseData.forecast.forecastDay[0].day.minTempC.ceil()}℃",
                   ),
                 ),
                 SizedBox(
@@ -60,65 +76,63 @@ class DailyScreen extends StatelessWidget {
                 SizedBox(
                   height: 20,
                 ),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      IconButton(
-                        iconSize: 40,
-                        onPressed: () {},
-                        icon: Icon(
-                          Icons.arrow_back_ios,
-                          color: AppColors.white,
-                        ),
-                      ),
-                      CustomContainer(
-                        day: "Mon",
-                        imagePath: AppImages.mainImage,
-                        text: "19°C",
-                        gradientColor1: Color(0XFF3E2D8F),
-                        gradientColor2: Color(0XFF9D52AC),
-                      ),
-                      SizedBox(
-                        width: 10.w,
-                      ),
-                      CustomContainer(
-                        day: "Tue",
-                        imagePath: AppImages.mainImage,
-                        text: "18°C",
-                        gradientColor1: Color(0XFF3E2D8F),
-                        gradientColor2: Color(0XFF9D52AC),
-                      ),
-                      SizedBox(
-                        width: 10.w,
-                      ),
-                      CustomContainer(
-                        day: "Wed",
-                        imagePath: AppImages.mainImage,
-                        text: "19°C",
-                        gradientColor1: Color(0XFF3E2D8F),
-                        gradientColor2: Color(0XFF9D52AC),
-                      ),
-                      SizedBox(
-                        width: 10.w,
-                      ),
-                      CustomContainer(
-                        day: "Thu",
-                        imagePath: AppImages.mainImage,
-                        text: "18°C",
-                        gradientColor1: Color(0XFF3E2D8F),
-                        gradientColor2: Color(0XFF9D52AC),
-                      ),
-                      IconButton(
-                        iconSize: 40,
-                        onPressed: () {},
-                        icon: Icon(
-                          Icons.arrow_forward_ios,
-                          color: AppColors.white,
-                        ),
-                      ),
-                    ],
-                  ),
+                SizedBox(
+                  width: 400.w,
+                  height: 180.h,
+                  child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount:
+                          widget.responseData.forecast.forecastDay.length,
+                      itemBuilder: (context, index) {
+                        final day =
+                            widget.responseData.forecast.forecastDay[index];
+
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Container(
+                            height: 172.h,
+                            width: 90.w,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(
+                                50.r,
+                              ),
+                              gradient: LinearGradient(
+                                colors: [AppColors.lightBlue, AppColors.pink],
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                              ),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  NormalText(
+                                    text:
+                                        "${((day.day.minTempC + day.day.maxTempC) ~/ 2).toString()}℃",
+                                    fontSize: 20,
+                                    color: AppColors.white,
+                                  ),
+                                  SizedBox(
+                                    height: 60.h,
+                                    width: 60.w,
+                                    child: Image.network(
+                                        "https:${day.day.condition.icon}"),
+                                  ),
+                                  NormalText(
+                                    text: DateFormat("E")
+                                        .format(DateTime.parse(day.date)),
+                                    fontSize: 20,
+                                    color: AppColors.white,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      }),
                 ),
                 SizedBox(
                   height: 40.h,
@@ -211,16 +225,6 @@ class DailyScreen extends StatelessWidget {
                 ),
                 SizedBox(
                   height: 15,
-                ),
-                Center(
-                  child: IconButton(
-                    onPressed: () {},
-                    icon: Icon(
-                      Icons.menu,
-                      size: 80,
-                      color: AppColors.white,
-                    ),
-                  ),
                 ),
               ],
             ),

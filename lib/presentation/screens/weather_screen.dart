@@ -1,12 +1,25 @@
+import 'dart:developer';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
+import 'package:weather_app/model/weather_model.dart';
+import 'package:weather_app/presentation/screens/daily_screen.dart';
 import 'package:weather_app/utils/app_colors.dart';
 import 'package:weather_app/utils/app_icons.dart';
 import 'package:weather_app/utils/app_images.dart';
 
-class WeatherScreen extends StatelessWidget {
-  const WeatherScreen({super.key});
+class WeatherScreen extends StatefulWidget {
+  final WeatherResponse responseData;
 
+  const WeatherScreen({required this.responseData, super.key});
+
+  @override
+  State<WeatherScreen> createState() => _WeatherScreenState();
+}
+
+class _WeatherScreenState extends State<WeatherScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,16 +38,50 @@ class WeatherScreen extends StatelessWidget {
         ),
         child: Column(
           children: [
-            SizedBox(
-              height: 200.h,
-              width: 200.w,
-              child: Image.asset(
-                AppImages.mainImage,
-                fit: BoxFit.cover,
-              ),
+            SizedBox(height: 20.h),
+            Stack(
+              children: [
+                SizedBox(
+                  height: 200.h,
+                  width: 330.w,
+                  child: Image.asset(
+                    AppImages.mainImage,
+                    // fit: BoxFit.cover,
+                  ),
+                ),
+                Positioned(
+                  right: 0,
+                  top: 15,
+                  child: IconButton(
+                    onPressed: () => Navigator.of(context).push(
+                      CupertinoPageRoute(
+                        builder: (context) => DailyScreen(
+                          responseData: widget.responseData,
+                        ),
+                      ),
+                    ),
+                    icon: Icon(
+                      Icons.menu,
+                      color: AppColors.white,
+                      size: 30.sp,
+                    ),
+                  ),
+                ),
+                Positioned(
+                  left: 0,
+                  top: 15,
+                  child: IconButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    icon: Icon(
+                      Icons.arrow_back_ios_new_outlined,
+                      color: AppColors.white,
+                    ),
+                  ),
+                ),
+              ],
             ),
             Text(
-              "10℃",
+              "${widget.responseData.current.tempC.ceil()}℃",
               style: TextStyle(
                 fontSize: 40.sp,
                 fontWeight: FontWeight.bold,
@@ -42,7 +89,7 @@ class WeatherScreen extends StatelessWidget {
               ),
             ),
             Text(
-              "Precipitations",
+              widget.responseData.current.condition.text,
               style: TextStyle(
                 fontSize: 25.sp,
                 color: AppColors.white,
@@ -52,7 +99,7 @@ class WeatherScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  "Max: 24℃",
+                  "Max: ${widget.responseData.forecast.forecastDay[0].day.maxTempC.ceil()}℃",
                   style: TextStyle(
                     fontSize: 20.sp,
                     color: AppColors.white,
@@ -60,7 +107,7 @@ class WeatherScreen extends StatelessWidget {
                 ),
                 SizedBox(width: 20.w),
                 Text(
-                  "Min: 18℃",
+                  "Min: ${widget.responseData.forecast.forecastDay[0].day.minTempC.ceil()}℃",
                   style: TextStyle(
                     fontSize: 20.sp,
                     color: AppColors.white,
@@ -98,6 +145,7 @@ class WeatherScreen extends StatelessWidget {
               ),
               child: Column(
                 children: [
+                  SizedBox(height: 5.h),
                   Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 30.0,
@@ -114,7 +162,7 @@ class WeatherScreen extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          "July, 21",
+                          DateFormat("MMMM, d").format(DateTime.now()),
                           style: TextStyle(
                             fontSize: 20.sp,
                             color: AppColors.white,
@@ -123,6 +171,7 @@ class WeatherScreen extends StatelessWidget {
                       ],
                     ),
                   ),
+                  SizedBox(height: 5.h),
                   Container(
                     width: double.infinity,
                     height: 1,
@@ -131,30 +180,38 @@ class WeatherScreen extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 20.0,
-                      vertical: 10,
+                      vertical: 20,
                     ),
                     child: SizedBox(
                       width: double.infinity.w,
-                      height: 120.h,
+                      height: 100.h,
                       child: ListView.builder(
-                          itemCount: 5,
+                          itemCount: widget
+                              .responseData.forecast.forecastDay[0].hour.length,
                           scrollDirection: Axis.horizontal,
                           itemBuilder: (context, index) {
+                            final day = widget.responseData.forecast
+                                .forecastDay[0].hour[index];
+                            final DateTime parseDate = DateTime.parse(day.time);
                             return Column(
                               children: [
                                 Text(
-                                  "19℃",
+                                  "${day.tempC.ceil()}℃",
                                   style: TextStyle(
                                     color: AppColors.white,
                                     fontSize: 16.sp,
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
-                                Image.asset(
-                                  AppIcons.sun,
+                                SizedBox(
+                                  width: 60.w,
+                                  height: 60.h,
+                                  child: Image.network(
+                                    "https:${day.condition.icon}",
+                                  ),
                                 ),
                                 Text(
-                                  "12.00",
+                                  DateFormat("HH:mm").format(parseDate),
                                   style: TextStyle(
                                     color: AppColors.white,
                                     fontWeight: FontWeight.w500,
