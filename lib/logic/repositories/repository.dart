@@ -19,7 +19,7 @@ class Repository {
         log(data.current.condition.text.toString());
         return data;
       } else {
-        throw Exception("noma'lumo xatolik yuz berdi");
+        throw Exception("noma'lum xatolik yuz berdi");
       }
     } catch (e) {
       log(e.toString());
